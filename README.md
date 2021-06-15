@@ -42,7 +42,7 @@ $ bet <surface> <surface_err> <density>
 ### 2. Load and analyze Spectrophotometer measurements in an organized way
 The idea is that many different nanoparticles will be measured in the spectophotometer along with a reference. Multiple runs of the same measurement may be performed in order to estimate the error.
 Then, the different nanoparticles and runs need to be be compared through plots.
-See [example](example/usage_example.html)
+See [example](example/usage_example.md)
 
 Read multiple measurements and average them.
 
