@@ -44,5 +44,17 @@ The idea is that many different nanoparticles will be measured in the spectophot
 Then, the different nanoparticles and runs need to be be compared through plots.
 See [example](https://github.com/fcossio/nanoparticle-characterization/blob/main/example/usage_example.ipynb)
 
+Read multiple measurements and average them.
+
+![loading multiple measurements into a single image](example/image1.png "Single nanoparticle")
+
+Compare multiple nanoparticles with different reference measurements and standard deviations.
+
+![multiple nanoparticles](example/image2.png "Multiple nanoparticles")
+
+Obtain Area Under the Curve.
+
+![area under the curve](example/image3.png "Area Under the Curve")
+
 ### 3. Load and plot XRD measurements
 
