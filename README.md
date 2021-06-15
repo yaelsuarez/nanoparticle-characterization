@@ -42,7 +42,7 @@ $ bet <surface> <surface_err> <density>
 ### 2. Load and analyze Spectrophotometer measurements in an organized way
 The idea is that many different nanoparticles will be measured in the spectophotometer along with a reference. Multiple runs of the same measurement may be performed in order to estimate the error.
 Then, the different nanoparticles and runs need to be be compared through plots.
-See [example](https://github.com/fcossio/nanoparticle-characterization/blob/main/example/usage_example.ipynb)
+See [example](example/usage_example.html)
 
 Read multiple measurements and average them.
 
@@ -50,11 +50,11 @@ Read multiple measurements and average them.
 
 Compare multiple nanoparticles with different reference measurements and standard deviations.
 
-![multiple nanoparticles](example/image2.png "Multiple nanoparticles")
+![multiple nanoparticles](example/image5.png "Multiple nanoparticles")
 
 Obtain Area Under the Curve.
 
-![area under the curve](example/image3.png "Area Under the Curve")
+![area under the curve](example/image6.png "Area Under the Curve")
 
 ### 3. Load and plot XRD measurements
 
