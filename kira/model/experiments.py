@@ -5,6 +5,7 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import logging
+from copy import deepcopy
 
 class Annealing:
     """
@@ -76,7 +77,7 @@ class Measurement:
         read them and get the mean for every x
         """
         txt_files = [os.path.join(folder_path,f)
-            for f in os.listdir(folder_path) if f.endswith('txt')]
+            for f in os.listdir(folder_path) if f.endswith('txt') and not f.startswith("._")]
         return cls.mean_laser_scan(txt_files)
 
     def crop(self, low:float, high:float):
@@ -97,13 +98,14 @@ class Measurement:
         :param low: inclusive lower limit.
         :param high: inclusive higher limit.
         """
-        self.crop(low, high)
-        max_luminescence = self.luminescence + self.std
-        min_luminescence = self.luminescence - self.std
-        max_auc = np.trapz(max_luminescence, self.spectrum)
-        min_auc = np.trapz(min_luminescence, self.spectrum)
+        temp_self = deepcopy(self)
+        temp_self.crop(low, high)
+        max_luminescence = temp_self.luminescence + temp_self.std
+        min_luminescence = temp_self.luminescence - temp_self.std
+        max_auc = np.trapz(max_luminescence, temp_self.spectrum)
+        min_auc = np.trapz(min_luminescence, temp_self.spectrum)
         mean_std = (max_auc-min_auc)/2
-        return np.trapz(self.luminescence, self.spectrum), mean_std
+        return np.trapz(temp_self.luminescence, temp_self.spectrum), mean_std
 
 
 class Nanoparticle:
@@ -170,6 +172,10 @@ class Nanoparticle:
     def plot(self, plot_ref: bool = False, **kwargs):
         plt.errorbar(self.meas.spectrum, self.meas.luminescence, **kwargs)
         if plot_ref:
+            if "label" in kwargs.keys():
+                kwargs["label"] += "_ref"
+            if "yerr" in kwargs.keys():
+                kwargs['yerr'] = self.ref.std
             plt.errorbar(self.ref.spectrum, self.ref.luminescence, **kwargs)
 
     def crop(self, low:float, high:float):
@@ -177,7 +183,7 @@ class Nanoparticle:
         self.meas.crop(low, high)
         self.ref.crop(low, high)
 
-    def crop_normalize_to_new_ref(self, new_ref:Measurement, lims:Tuple[float, float]):
+    def crop_rescale_to_new_ref(self, new_ref:Measurement, lims:Tuple[float, float]):
         """Modify the meas so that the reference matches the new_ref,
         it assumes that all measurements have exaclty the same spectrum
         :param lims: (lower, upper) inclusive limits of the spectrum for getting the

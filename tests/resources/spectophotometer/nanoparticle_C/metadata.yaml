@@ -1,0 +1,8 @@
+identity: NanopC
+dopant: Ln
+dopant_concentration: 1
+# folder where the reference lives in the parent directory to the meas_folder
+reference: reference_meas_2
+annealing_time: 1
+annealing_temp: 400
+d_xrd: 60.5
