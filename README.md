@@ -19,7 +19,7 @@ $ pip install git+https://github.com/fcossio/nanoparticle-characterization
 ```
 
 ## Usage
-This repo has 3 specific use-cases:
+This repo has 2 specific use-cases:
 ### 1. Estimate radius of a nanoparticle
 Estimate the radius of a nanoparticle based on the measurement of BET specific surface area analysis, assuming a spherical morphology of the nanoparticle.
 
@@ -55,6 +55,4 @@ Compare multiple nanoparticles with different reference measurements and standar
 Obtain Area Under the Curve.
 
 ![area under the curve](example/image6.png "Area Under the Curve")
-
-### 3. Load and plot XRD measurements
 
