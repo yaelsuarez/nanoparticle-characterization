@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import logging
 from copy import deepcopy
 
+
 class Annealing:
     """
     :param temperature: Temperature (ºC) of annealing
@@ -15,6 +16,7 @@ class Annealing:
     def __init__(self, temperature: float, time: float):
         self.temperature = temperature
         self.time = time
+
     @classmethod
     def from_metadata(cls, metadata):
         temp = metadata['annealing_temp']
@@ -23,12 +25,14 @@ class Annealing:
         time = float(time) if time is not None else None
         return cls(temperature=temp, time=time)
 
+
 class Measurement:
     """
     :param spectrum: List of x axis values (Wavelength (nm))
     :param luminescence: List of y axis values (Intensity (a.u.))
     """
-    def __init__(self, spectrum: List[float], luminescence: List[float], std: List[float]):
+    def __init__(self, spectrum: List[float], luminescence: List[float],
+                 std: List[float]):
         self.spectrum = spectrum
         self.luminescence = luminescence
         self.std = std
@@ -37,12 +41,12 @@ class Measurement:
     def read_laser_scan(cls, filename):
         """get spectrum and luminescence from a single document"""
         with open(filename, 'r') as f:
-            l=next(f)
+            l = next(f)
             while l != ">>>>>Begin Spectral Data<<<<<\n":
-                l=next(f)
-            reader=csv.reader(f,delimiter="\t")
-            x=[]
-            y=[]
+                l = next(f)
+            reader = csv.reader(f, delimiter="\t")
+            x = []
+            y = []
             for row in reader:
                 x.append(float(row[0]))
                 y.append(float(row[1]))
@@ -76,11 +80,13 @@ class Measurement:
         Scan a folder for txt files,
         read them and get the mean for every x
         """
-        txt_files = [os.path.join(folder_path,f)
-            for f in os.listdir(folder_path) if f.endswith('txt') and not f.startswith("._")]
+        txt_files = [
+            os.path.join(folder_path, f) for f in os.listdir(folder_path)
+            if f.endswith('txt') and not f.startswith("._")
+        ]
         return cls.mean_laser_scan(txt_files)
 
-    def crop(self, low:float, high:float):
+    def crop(self, low: float, high: float):
         """crops the meas to the specified range"""
         mask_low = self.spectrum >= low
         mask_high = self.spectrum <= high
@@ -92,7 +98,7 @@ class Measurement:
     def plot(self, **kwargs):
         plt.errorbar(self.spectrum, self.luminescence, **kwargs)
 
-    def auc(self, low:float, high:float):
+    def auc(self, low: float, high: float):
         """
         Find AUC of the selected the spectra.
         :param low: inclusive lower limit.
@@ -104,7 +110,7 @@ class Measurement:
         min_luminescence = temp_self.luminescence - temp_self.std
         max_auc = np.trapz(max_luminescence, temp_self.spectrum)
         min_auc = np.trapz(min_luminescence, temp_self.spectrum)
-        mean_std = (max_auc-min_auc)/2
+        mean_std = (max_auc - min_auc) / 2
         return np.trapz(temp_self.luminescence, temp_self.spectrum), mean_std
 
 
@@ -120,14 +126,9 @@ class Nanoparticle:
     :param meas: Mesurement of luminescence for the np.
     :param ref: the measurement of the control. It is used to compare the nanoparticle measurements against 
     """
-    def __init__(self,
-                identity: str,
-                dopant: str,
-                dopant_concentration:float,
-                annealing: Annealing,
-                d_xrd: float,
-                meas: Measurement,
-                ref: Measurement):
+    def __init__(self, identity: str, dopant: str, dopant_concentration: float,
+                 annealing: Annealing, d_xrd: float, meas: Measurement,
+                 ref: Measurement):
         self.identity = identity
         self.dopant = dopant
         self.dopant_concentration = dopant_concentration
@@ -137,7 +138,7 @@ class Nanoparticle:
         self.ref = ref
 
     @classmethod
-    def from_folder(cls, meas_folder:str):
+    def from_folder(cls, meas_folder: str):
         """Loads a Nanoparticle from a measurements folder.
         :param meas_folder: A folder that contains all the txt files with
             measurements that will be averaged. The folder also contains
@@ -164,10 +165,13 @@ class Nanoparticle:
         ref_meas = Measurement.mean_laser_scan_from_folder(ref_path)
         if not np.isclose(ref_meas.spectrum, mean_meas.spectrum).all():
             logging.warning("the spectrum of the reference is different")
-        return cls(identity=metadata['identity'], dopant=metadata['dopant'],
-                    dopant_concentration=metadata['dopant_concentration'],
-                    d_xrd = metadata['d_xrd'], annealing=annealing,
-                    meas=mean_meas, ref=ref_meas)
+        return cls(identity=metadata['identity'],
+                   dopant=metadata['dopant'],
+                   dopant_concentration=metadata['dopant_concentration'],
+                   d_xrd=metadata['d_xrd'],
+                   annealing=annealing,
+                   meas=mean_meas,
+                   ref=ref_meas)
 
     def plot(self, plot_ref: bool = False, **kwargs):
         plt.errorbar(self.meas.spectrum, self.meas.luminescence, **kwargs)
@@ -178,12 +182,13 @@ class Nanoparticle:
                 kwargs['yerr'] = self.ref.std
             plt.errorbar(self.ref.spectrum, self.ref.luminescence, **kwargs)
 
-    def crop(self, low:float, high:float):
+    def crop(self, low: float, high: float):
         """crop the meas and ref to the specified range"""
         self.meas.crop(low, high)
         self.ref.crop(low, high)
 
-    def crop_rescale_to_new_ref(self, new_ref:Measurement, lims:Tuple[float, float]):
+    def crop_rescale_to_new_ref(self, new_ref: Measurement,
+                                lims: Tuple[float, float]):
         """Modify the meas so that the reference matches the new_ref,
         it assumes that all measurements have exaclty the same spectrum
         :param lims: (lower, upper) inclusive limits of the spectrum for getting the
