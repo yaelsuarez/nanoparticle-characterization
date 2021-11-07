@@ -1,7 +1,8 @@
 import sys
 import argparse
 
-def BET_radius(surface:float, surface_err:float, density:float):
+
+def BET_radius(surface: float, surface_err: float, density: float):
     """
     Estimate the radius of a nanoparticle based on the measurement of
     BET specific surface area analysis, assuming a spherical morphology
@@ -22,23 +23,25 @@ def BET_radius(surface:float, surface_err:float, density:float):
     radius_err = abs(radius_high - radius)
     return radius, radius_err
 
+
 def cli_bet_radius(raw_args=sys.argv[1:]):
     """
     CLI to quickly get the estimation in the terminal.
     """
-    parser=argparse.ArgumentParser()
-    parser.add_argument("surface", 
-        help="BET specific surface area (m²/g)", type=float)
-    parser.add_argument("surface_err", 
-        help="± Error in measurement of surface (m²/g)", type=float)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("surface",
+                        help="BET specific surface area (m²/g)",
+                        type=float)
+    parser.add_argument("surface_err",
+                        help="± Error in measurement of surface (m²/g)",
+                        type=float)
     parser.add_argument("density",
-        help="Density of the material (g/cm³)", type=float)
-    args=parser.parse_args(raw_args)
-    radius, r_err = BET_radius(
-        surface=args.surface,
-        surface_err=args.surface_err,
-        density=args.density
-    )
+                        help="Density of the material (g/cm³)",
+                        type=float)
+    args = parser.parse_args(raw_args)
+    radius, r_err = BET_radius(surface=args.surface,
+                               surface_err=args.surface_err,
+                               density=args.density)
     diameter = 2.0 * radius
     d_err = 2.0 * r_err
     print(f"radius = {radius:.2f} ± {r_err:.2f} nm")
