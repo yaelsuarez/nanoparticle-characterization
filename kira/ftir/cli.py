@@ -1,22 +1,18 @@
 from argparse import ArgumentParser
-from kira.ftir.utils import read_asp, auc_ratio
+from kira.ftir.utils import read_asp, ratio_a_b_peaks
 import sys
 
 
 def calc_ratio(raw_args):
     parser = ArgumentParser("FTIR ratio two peaks")
     parser.add_argument("-f", type=str)
-
-    #CO3 value
-    x_start_b = 1400
-    x_stop_b = 1600
-    #PO3 value 
-    x_start_a = 900
-    x_stop_a = 1100
+    parser.add_argument("-peak_a", type=int)
+    parser.add_argument("-peak_b", type=int)
+    parser.add_argument("-range_auc", type=int)
 
     args = parser.parse_args(raw_args)
     x,y = read_asp(args.f)
-    ratio_a_b = auc_ratio(x,y,x_start_b, x_start_a, x_stop_b, x_stop_a)
+    ratio_a_b = ratio_a_b_peaks(x,y,args.peak_a, args.peak_b, args.range_auc)
     print(ratio_a_b)
 
 

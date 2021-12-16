@@ -32,12 +32,15 @@ def read_asp(file_path: str) -> Tuple[np.array, np.array]:
     y = np.array(y_data)
     return x, y
 
-def auc_ratio(x,y,x_start_b, x_start_a, x_stop_b, x_stop_a):
-    """Find the ratio between AUC of two peaks, being peak a the reference"""
-    auc_b = auc_value(x,y,x_start_b, x_stop_b)
+def ratio_a_b_peaks(x,y,peak_a, peak_b, range_auc):
+    x_start_a = peak_a - range_auc
+    x_stop_a = peak_a + range_auc
+    x_start_b = peak_b - range_auc
+    x_stop_b = peak_b + range_auc
     auc_a = auc_value(x,y,x_start_a, x_stop_a)
-    a_b_peak_ratio = auc_b/auc_a
-    return  a_b_peak_ratio
+    auc_b = auc_value(x,y,x_start_b, x_stop_b)
+    a_b_ratio = auc_b/auc_a
+    return  a_b_ratio
 
 def auc_value(x, y, x_start, x_stop):
     """Find AUC by trapz method"""
